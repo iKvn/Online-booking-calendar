@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css"
+  </head>
+  <body>
+    <div class='pulse-container'>
+      <div class="pulse-bubble pulse-bubble-1"></div>
+      <div class="pulse-bubble pulse-bubble-2"></div>
+      <div class="pulse-bubble pulse-bubble-3"></div>
+    </div>
+    <main class="container hide" id='app'>
+      <table>
+        <thead>
+          <tr>
+            <td>
+              <button type="button" value="-1"><</button>
+            </td>
+            <td colspan="5" class="inform" id="informMonth"></td>
+            <td>
+              <button type="button" value="1">></button>
+            </td>
+          </tr>
+          <tr id="dayWeek">
+          </tr>
+        </thead>
+        <tbody id='calendar'>          
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="7" class="inform" id="selectDay">
+             <span>Дата не обрана!</span>
+            </td>
+          </tr> 
+          <tr>
+            <td colspan="7" class="inform" id="selectTime">
+              <button type="button" class="down-button hide">Обрати час</button>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </main>
+    <script src="scripts.js"></script>
+  </body>
+</html>
