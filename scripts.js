@@ -9,9 +9,11 @@ const selectedDay = {
   clock: 0,
   minutes: 0,
   target: null,
+  indexweek: 0,
+  indexday: 0
 }
 
-let availableDates = [9, 10, 11]
+let availableDates = [20, 21, 26, 28, 30]
 let calendarDays = []
 let timingFlag = false
 let dateConfirmed = false
@@ -68,10 +70,11 @@ function calendar() {
 
   let lastDayCurrent = new Date(year, month, 0).getDate()
   let lastDayPrevious = new Date(year, month - 1, 0).getDate()
-
+  //debugger
   let firstDayWeek = new Date(year, month - 1, 1).getDay()
   let numberDaysLastMonth = 2 - (firstDayWeek != 0 ? firstDayWeek : 7)
-  for (let i = numberDaysLastMonth; i <= 41 + numberDaysLastMonth; i++) {
+  const maxIndex = 6 - firstDayWeek + lastDayPrevious
+  for (let i = numberDaysLastMonth; i <= (maxIndex > 35 ? 41 : 34) + numberDaysLastMonth; i++) {
     let day
     let dayWeek = new Date(year, month - 1, i).getDay()
     if (dayWeek != 1) {
@@ -84,42 +87,47 @@ function calendar() {
     days[week].push(day)
   }
   calendarDays = days
+  //debugger
+  bootFlag = calendarDays.length == 0
 }
 
 function getParametersDay(index, month, lastDayCurrent, lastDayPrevious) {
   let available = false
   let currentdate = new Date()
-  if (index <= 0) {
+  let currentday = currentdate.getDate()
+  let currentMonth = currentdate.getMonth() + 1
+  //debugger
+  if (index <= 0 ) {
     index = lastDayPrevious + index
     month--
   } else if (index <= lastDayCurrent) {
     let monthindex = month * 100 + index
-    if (
-      (availableDates.includes(monthindex) &&
-        index >= currentdate.getDate() &&
-        month == currentdate.getMonth() + 1) ||
-      month > currentdate.getMonth() + 1
-    ) {
-      available = true
-    }
+    if (availableDates.length > 0) available = availableDates.includes(monthindex)// && index >= currentday
+    else if(currentMonth == month) available = index >= currentday && index <= lastDayCurrent 
+    else if(currentMonth < month) available = index > lastDayPrevious && index <= lastDayCurrent
   } else {
     index = index - lastDayCurrent
     month++
   }
-  let monthindex = month * 100 + index
-  available = true//availableDates.includes(monthindex)
 
   return { index, month, available }
 }
 
 function getAvailableDates(firstDay, month, year, actionName){
-  const requestData {
+  const requestData = {
     'day': firstDay, 
     month, 
     year
   }
-  const returnArray = Array.isArray(requestAPI('getAvailableDates', requestData)) || []   
-  setAvailableDates(returnArray, actionName)
+  let returnArray
+  requestAPI('getAvailableDates', requestData).then((res) => {
+    //debugger
+    if(res.outputValue && Array.isArray(res.outputValue)) returnArray = res.outputValue
+    else returnArray = availableDates
+    setAvailableDates(returnArray, actionName)
+    generateCalendar(actionName)
+  })   
+  
 }
 
 function setAvailableDates(returnArray, actionName) {
@@ -129,7 +137,6 @@ function setAvailableDates(returnArray, actionName) {
     switch (actionName) {
       case 'defaultSettings':
         calendar()
-        bootFlag = false
         break
       case 'monthChange':
         cleanСurrentTargetStyle()
@@ -137,24 +144,16 @@ function setAvailableDates(returnArray, actionName) {
         currentTargetStyle()
         break
     }
-  } else availableDates = []
+  } else availableDates = availableDates
 }
 
-function decreaseTime() {
-  if (!bootFlag) {
-    //clearInterval(nIntervId)
-    spinner.classList.add('hide')
-    container.classList.remove('hide')
-  }
-}
-
-function generateCalendar(update = false) {
+function generateCalendar(actionName) {
   const informMonth = document.querySelector('#informMonth');
   informMonth.innerHTML = `${parametersMonth.name} ${parametersMonth.year}`
 
   const calendar = document.querySelector('#calendar')
 
-  if(update) calendar.replaceChildren()
+  if(actionName === 'monthChange') calendar.replaceChildren()
   else {
     day.forEach((d) => {
       const td = document.createElement('td');
@@ -172,13 +171,17 @@ function generateCalendar(update = false) {
       td.setAttribute('indexWeek', indexWeek);
       td.setAttribute('indexDay', indexDay);
       td.classList.add('day')  
-      td.classList.add('notselected') 
+      if(selectedDay.target && selectedDay.year == parametersMonth.year && selectedDay.month == parametersMonth.number && selectedDay.indexweek == indexWeek && selectedDay.indexday == indexDay) {
+        td.classList.add('selected')
+        selectedDay.target = td
+      } else td.classList.add('notselected')
       if(!day.available) td.classList.add('notAvailable')
       td.addEventListener('click', clickDay)
       tr.appendChild(td)
     })
     calendar.append(tr);
-  })    
+  })   
+  decreaseTime() 
 }
 
 function clickDay(event){
@@ -199,6 +202,8 @@ function clickDay(event){
     selectedDay.month = dayClick.month
     selectedDay.index = dayClick.index
     selectedDay.year = parametersMonth.year
+    selectedDay.indexweek = indexWeek
+    selectedDay.indexday = indexDay
     currentTargetStyle()
     
     informSelectDay.innerHTML = `Дата запису: ${formatDate()}`
@@ -230,7 +235,7 @@ function monthChange(event){
   if (valueChange == -1 && startdate.getTime() < CURRENT_DATE.getTime() || valueChange == 1 && enddate.getTime() > CURRENT_DATE.getTime()) {
     parametersMonth = getParametersMonth(CURRENT_DATE, valueChange)
     getAvailableDates(parametersMonth.firstDay, parametersMonth.number, parametersMonth.year, 'monthChange')
-    generateCalendar(true)
+    //generateCalendar(true)
   }
 }
 
@@ -242,6 +247,7 @@ function cleanСurrentTargetStyle(){
 }
 
 function currentTargetStyle(){
+  //debugger
   if (selectedDay.target && selectedDay.month === parametersMonth.number) {
     selectedDay.target.classList.remove('notselected')
     selectedDay.target.classList.add('selected')
@@ -250,9 +256,21 @@ function currentTargetStyle(){
 
 function defaultSettings(actionName = 'defaultSettings') {
   getAvailableDates(parametersMonth.firstDay, parametersMonth.number, parametersMonth.year, actionName)
-  generateCalendar()
+  //debugger
+  //generateCalendar()
   //console.log(bootFlag)
-  setInterval(decreaseTime(), 100)
+  //bootFlag = false
+  //setInterval(decreaseTime(), 100)
+}
+
+
+function decreaseTime() {
+  //console.log(bootFlag)
+  if (!bootFlag) {
+    clearInterval(nIntervId)
+    spinner.classList.add('hide')
+    container.classList.remove('hide')
+  }
 }
 
 const buttons = document.querySelectorAll("button");
@@ -261,29 +279,41 @@ buttons.forEach((button) => {
 })
 const spinner = document.querySelector('.pulse-container')
 const container = document.querySelector('.container')
-setInterval(decreaseTime(), 100)
+let nIntervId = setInterval(decreaseTime(), 100)
 
 defaultSettings()
 
 async function requestAPI(requestType, requestData, method = "GET", apikey = undefined) {
-  const url = 'https://script.google.com/macros/s/AKfycbzRGGeIsy6j9QKgGzqGvLXw7c6XOJ8mztcXDcz4uBm3S_b9hAg2znP7TYPUBnU6LKaegQ/exec?requestType=' + requestType;
+  let url = 'https://script.google.com/macros/s/AKfycbzRGGeIsy6j9QKgGzqGvLXw7c6XOJ8mztcXDcz4uBm3S_b9hAg2znP7TYPUBnU6LKaegQ/exec?requestType=' + requestType;
   const headers = {}
-  headers['Content-Type'] = 'application/json'
-  let body
-  if (requestData) {
-    body = JSON.stringify(data)
-  } else if (apikey) {
+  headers['Content-Type'] = 'text/plain'
+  //headers['Access-Control-Allow-Origin'] = '*'
+  headers['mode'] = 'no-cors'
+  const options = {
+    method, 
+    'mode': 'no-cors',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+  }
+
+  if (requestData && method != "GET") {
+    options['body'] = JSON.stringify(requestData)
+  } else if(requestData && method == "GET") {
+    url = url + '&day=' + requestData.day + '&month=' + requestData.month + '&year=' + requestData.year
+  }
+  if (apikey) {
     headers['API-Key'] = apikey
   }
+  //options['headers'] = headers
+  
   try {
-    const response = await fetch(url, {
-      method,
-      headers,
-      body,
-    })
-
-    return await response.json()
+    const response = await fetch(url)
+    //debugger
+    //console.log(JSON.stringify(response))
+    if(response.ok) return await response.json()
+      else return {"outputValue":[715,716,717,718,719,720,722,723,724,725,726,727,729,730,731]}
   } catch (e) {
+    //debugger
     throw e
   }
 }
+
