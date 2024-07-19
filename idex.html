@@ -14,14 +14,14 @@
     </div>
     <main class="container hide" id='app'>
       <table>
-        <thead>
-          <tr>
+        <thead id="selectedDay">
+          <tr id="monthChange">
             <td>
-              <button type="button" value="-1"><</button>
+              <button type="button" id="monthChange1" value="-1"><</button>
             </td>
             <td colspan="5" class="inform" id="informMonth"></td>
             <td>
-              <button type="button" value="1">></button>
+              <button type="button" id="monthChange2" value="1">></button>
             </td>
           </tr>
           <tr id="dayWeek">
@@ -29,17 +29,35 @@
         </thead>
         <tbody id='calendar'>          
         </tbody>
+        <thead id="selectedTime" class="hide">
+          <tr id="dayChange">
+            <td>
+              <button type="button" id="dayChange1" value="-1"><</button>
+            </td>
+            <td colspan="3" class="inform" id="informDay"></td>
+            <td>
+              <button type="button" id="dayChange2" value="1">></button>
+            </td>
+          </tr>
+        </thead>
+        <tbody id='time' class="hide">          
+        </tbody>
         <tfoot>
           <tr>
-            <td colspan="7" class="inform" id="selectDay">
-             <span>Дата не обрана!</span>
-            </td>
+            <td colspan="7" class="inform" id="selectDay">Дата не обрана!</td>
           </tr> 
           <tr>
             <td colspan="7" class="inform" id="selectTime">
-              <button type="button" class="down-button hide">Обрати час</button>
+              <span id="selectTimeText"></span>
+              <button type="button" class="down-button" id="selectTimeButton">Обрати час</button>
             </td>
           </tr>
+          <tr id='selectedDayClock' class="hide">
+            <td colspan="7" class="inform">
+              <button type="button" id="chooseAnotherDay" class="down-button">Редагувати</button>
+              <button type="button" id="confirmSelection" class="down-button">Підтвердити</button>
+            </td>
+          </tr>  
         </tfoot>
       </table>
     </main>

@@ -13,7 +13,7 @@ body {
   overflow: hidden;
 }
 .pulse-container {
-  height: 100vh;
+  height: 80vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -68,10 +68,10 @@ tbodytd{
   font-weight: 625;
 }
 thead {
-  background-color: #77c7f1;
+  background-color: #83c9ee;
 }
 tfoot {
-  background-color: #77c7f1;
+  background-color: #83c9ee;
 }
 .inform {
   height: 35px;
@@ -85,7 +85,7 @@ tfoot {
 }
 .dayWeek {
   background: #ffffff;
-  border-bottom: 1px solid #77c7f1;
+  border-bottom: 1px solid #83c9ee;
   padding-top: 4px;
 }
 .day {
@@ -96,7 +96,13 @@ tfoot {
   border-radius: 50%;
 }
 .clock {
+  width: 55px;
+  height: 32px;
+  font-weight: 500;
+  font-size: 18px;
   border-radius: 15%;
+  padding-top: 1%;
+  border-top: 10px;
 }
 .selected {
   background: #66bb6a;

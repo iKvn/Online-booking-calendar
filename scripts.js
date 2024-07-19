@@ -24,9 +24,41 @@ const recordingTime = {
   endClock: 17,
   endMinutes: 0,
 }
-let availableTime = [9, 10, 11]
+let availableTime = [9, 10, 11, 12, 13, 14, 15]
 let workTime = []
 let timeBusy = false
+
+const informSelectDay = document.querySelector('#selectDay');
+const theadSelectedDay = document.getElementById('selectedDay')
+const theadCalendar = document.getElementById('calendar')
+const theadSelectedTime = document.getElementById('selectedTime')
+const theadTime = document.getElementById('time')
+
+const tfootSelectTime = document.getElementById('selectTime')
+const tfootSelectTimeText = document.getElementById('selectTimeText')
+const tfootSelectDayTime = document.getElementById('selectedDayClock')
+
+const buttonSelectTime = document.querySelector('#selectTimeButton');
+const buttons = document.querySelectorAll("button");
+buttons.forEach((button) => {
+  if(button.id === "monthChange1" || button.id === "monthChange2") button.addEventListener("click", monthChange)
+  else if(button.id === "dayChange1" || button.id === "dayChange2") button.addEventListener("click", dayChange)
+  else if(button.id === "selectTimeButton") button.addEventListener("click", timeSelection)
+  else if(button.id === "chooseAnotherDay") button.addEventListener("click", chooseAnotherDay)
+  else if(button.id === "confirmSelection") button.addEventListener("click", confirmSelection)
+})
+
+const spinner = document.querySelector('.pulse-container')
+const container = document.querySelector('.container')
+
+let nIntervId
+
+defaultSettings()
+
+function chooseAnotherDay(){
+  //debugger
+  defaultSettings('update')
+}
 
 function getParametersMonth(valueDate, addMonth = 0) {
   let lastDay = getLastDayOfMonth(
@@ -91,6 +123,35 @@ function calendar() {
   bootFlag = calendarDays.length == 0
 }
 
+function timeOutput(){
+	let currentdate = new Date()
+  let available = false
+  //let duration = recordingTime.duration * 60 * 1000
+  let startClock = recordingTime.startClock
+  let startMinutes = recordingTime.startMinutes
+  let endClock = recordingTime.endClock
+  workTime = []
+  let row = 0
+  workTime[row] = []
+  workTime[row].push({clock: '', minutes: '', date: '', available: false})
+  for (let clock = startClock; clock <= endClock; clock++) {
+    let startDate = new Date(selectedDay.year, selectedDay.month -1, selectedDay.index, clock, startMinutes).getTime() 
+
+    available = availableTime.includes(clock) && startDate >= currentdate.getTime() 
+    workTime[row].push({clock, minutes: startMinutes, date: startDate, available})
+    if (workTime[row].length === 4) {
+      workTime[row].push({clock: '', minutes: '', date: '', available: false})
+      if (clock < endClock) {
+        row++
+        workTime[row] = []
+        workTime[row].push({clock: '', minutes: '', date: '', available: false})
+      }
+    }
+  }
+  workTime = workTime.slice()
+  //console.log(workTime)
+}
+
 function getParametersDay(index, month, lastDayCurrent, lastDayPrevious) {
   let available = false
   let currentdate = new Date()
@@ -127,11 +188,9 @@ function getAvailableDates(firstDay, month, year, actionName){
     setAvailableDates(returnArray, actionName)
     generateCalendar(actionName)
   })   
-  
 }
 
 function setAvailableDates(returnArray, actionName) {
-  //console.log(returnArray)
   if (Array.isArray(returnArray)) {
     availableDates = returnArray.slice()
     switch (actionName) {
@@ -143,8 +202,49 @@ function setAvailableDates(returnArray, actionName) {
         calendar()
         currentTargetStyle()
         break
+      case 'update':
+        cleanСurrentTargetStyle()
+        calendar()
+        currentTargetStyle()
+        break
     }
   } else availableDates = availableDates
+}
+
+function timeSelection(){
+  //debugger
+  getAvailableTime('defaultSettings')
+}
+
+function getAvailableTime(actionName) {
+  const requestData = {
+    day: selectedDay.index, 
+    month: selectedDay.month, 
+    year: selectedDay.year
+  }
+  let returnArray = availableTime
+  requestAPI('getAvailableTime', requestData).then((res) => {
+    if(res.outputValue && Array.isArray(res.outputValue)) returnArray = res.outputValue;
+    else returnArray = availableTime;
+    setAvailableTime(returnArray, actionName);
+    generateTimeCalendar(actionName);
+  }) 
+}
+
+function setAvailableTime(returnArray, actionName) {
+  if (Array.isArray(returnArray)) {
+    availableTime = returnArray.slice()
+    switch (actionName) {
+      case 'defaultSettings':
+        timeOutput() 
+        timingFlag = true
+        break
+      case 'dayChange':
+        cleanСurrentTargetStyle()
+        timeOutput()
+        break
+    } 
+  } else availableTime = availableTime
 }
 
 function generateCalendar(actionName) {
@@ -153,7 +253,7 @@ function generateCalendar(actionName) {
 
   const calendar = document.querySelector('#calendar')
 
-  if(actionName === 'monthChange') calendar.replaceChildren()
+  if(actionName != 'defaultSettings') calendar.replaceChildren()
   else {
     day.forEach((d) => {
       const td = document.createElement('td');
@@ -176,7 +276,7 @@ function generateCalendar(actionName) {
         selectedDay.target = td
       } else td.classList.add('notselected')
       if(!day.available) td.classList.add('notAvailable')
-      td.addEventListener('click', clickDay)
+      else td.addEventListener('click', clickDay)
       tr.appendChild(td)
     })
     calendar.append(tr);
@@ -184,21 +284,51 @@ function generateCalendar(actionName) {
   decreaseTime() 
 }
 
-function clickDay(event){
+function generateTimeCalendar(actionName) {
+  const informDay = document.querySelector('#informDay');
+  informDay.innerHTML = `${formatDate()}`
 
+  const time = document.querySelector('#time')
+
+  //if(actionName != 'defaultSettings') 
+  time.replaceChildren()
+
+  workTime.forEach((row, indexRow) => {
+    const tr = document.createElement('tr');  
+    row.forEach((dayTime, indexTime) => {
+      const td = document.createElement('td');
+      td.innerHTML = formatTime(dayTime);
+      td.setAttribute('indexRow', indexRow);
+      td.setAttribute('indexTime', indexTime);
+      td.classList.add('clock')
+      td.classList.add('notselected')
+      /*if(selectedDay.target && selectedDay.year == parametersMonth.year && selectedDay.month == parametersMonth.number && selectedDay.indexweek == indexWeek && selectedDay.indexday == indexDay) {
+        td.classList.add('selected')
+        selectedDay.target = td
+      } else td.classList.add('notselected')*/
+      if(!dayTime.available) td.classList.add('notAvailable')
+      else td.addEventListener('click', clickTime)
+      tr.appendChild(td)
+    })
+    time.append(tr);
+  })   
+  theadSelectedTime.classList.remove('hide')
+  tfootSelectTimeText.classList.remove('hide')
+  tfootSelectTimeText.innerHTML = 'Час не обраний!';
+  theadTime.classList.remove('hide')
+  theadSelectedDay.classList.add('hide')
+  theadCalendar.classList.add('hide')
+  buttonSelectTime.classList.add('hide')
+}
+
+function clickDay(event){
   const indexWeek = Number(event.target.attributes.indexWeek.value)
   const indexDay = Number(event.target.attributes.indexDay.value)
   const dayClick = calendarDays[indexWeek][indexDay]
-  const informSelectDay = document.querySelector('#selectDay');
-  const buttonSelectTime = document.querySelector('.down-button');
-
+  
   if (dayClick.available) {
-    cleanСurrentTargetStyle()        
-    if (event.target.tagName === "SPAN") {
-      selectedDay.target = event.target.offsetParent
-    } else {
-      selectedDay.target = event.target
-    }
+    cleanСurrentTargetStyle()         
+    selectedDay.target = event.target
     selectedDay.month = dayClick.month
     selectedDay.index = dayClick.index
     selectedDay.year = parametersMonth.year
@@ -207,15 +337,45 @@ function clickDay(event){
     currentTargetStyle()
     
     informSelectDay.innerHTML = `Дата запису: ${formatDate()}`
+    tfootSelectTime.classList.remove('hide')
     buttonSelectTime.classList.remove('hide')
-  } else {
+    tfootSelectTimeText.classList.add('hide')
+  } /*else {
     informSelectDay.innerHTML = 'Дата не обрана!'
     buttonSelectTime.classList.add('hide')
-  }
+  }*/
+}
+
+function clickTime(event){
+  const indexRow = Number(event.target.attributes.indexRow.value)
+  const indexTime = Number(event.target.attributes.indexTime.value)
+  const time = workTime[indexRow][indexTime]
+  if (time.available) {
+    cleanСurrentTargetStyle()        
+    selectedDay.target = event.target
+    selectedDay.clock = time.clock
+    selectedDay.minutes = time.minutes
+    currentTargetStyle()
+
+    tfootSelectTimeText.innerHTML = `Час запису: ${formatTime()}`
+    tfootSelectDayTime.classList.remove('hide')
+  } /*else {
+    tfootSelectTime.innerHTML = 'Час не обраний!';
+    tfootSelectDayTime.classList.add('hide')
+  }*/
 }
 
 function formatDate(){
   return formatValues(selectedDay.index) + '.' + formatValues(selectedDay.month) + '.' + selectedDay.year
+}
+
+function formatTime(dayTime = null){
+  let formatTimeText = ''
+  if (dayTime) {
+    if (dayTime.clock != '')
+      formatTimeText = formatValues(dayTime.clock) + ':' + formatValues(dayTime.minutes)
+  } else formatTimeText = formatValues(selectedDay.clock) + ':' + formatValues(selectedDay.minutes)
+  return formatTimeText
 }
 
 function formatValues(values){
@@ -239,6 +399,21 @@ function monthChange(event){
   }
 }
 
+function dayChange(event){
+  const valueChange = Number(event.target.value)
+  let currentdate = new Date()
+  currentdate.setHours(0, 0, 0, 0)
+  let newCurrentdate = new Date(parametersMonth.year, parametersMonth.number-1, selectedDay.index + valueChange)
+  if (newCurrentdate.getTime() >= currentdate.getTime() ) {
+    CURRENT_DATE = newCurrentdate
+    parametersMonth = getParametersMonth(CURRENT_DATE)
+    selectedDay.index = CURRENT_DATE.getDate()
+    selectedDay.month = CURRENT_DATE.getMonth() + 1
+    selectedDay.year = parametersMonth.year
+    getAvailableTime('dayChange')
+  }
+}
+
 function cleanСurrentTargetStyle(){
   if (selectedDay.target) {
     selectedDay.target.classList.remove('selected')
@@ -255,33 +430,40 @@ function currentTargetStyle(){
 }
 
 function defaultSettings(actionName = 'defaultSettings') {
-  getAvailableDates(parametersMonth.firstDay, parametersMonth.number, parametersMonth.year, actionName)
-  //debugger
-  //generateCalendar()
-  //console.log(bootFlag)
-  //bootFlag = false
-  //setInterval(decreaseTime(), 100)
-}
+  bootFlag = true
+  dateConfirmed = false
+  timingFlag = false
+  const currentdate = new Date()     
+  selectedDay.target = null
+  selectedDay.index = 0
+  selectedDay.year = 0
+  selectedDay.clock = 0
+  parametersMonth = getParametersMonth(currentdate)
+  selectedDay.month = parametersMonth.number
 
+  informSelectDay.innerHTML = 'Дата не обрана!'  
+  theadSelectedTime.classList.add('hide')
+  theadTime.classList.add('hide')
+  theadSelectedDay.classList.remove('hide')
+  theadCalendar.classList.remove('hide')
+  tfootSelectTime.classList.add('hide')
+  tfootSelectDayTime.classList.add('hide')
+
+  nIntervId = setInterval(decreaseTime(), 100)
+  getAvailableDates(parametersMonth.firstDay, parametersMonth.number, parametersMonth.year, actionName)
+}
 
 function decreaseTime() {
   //console.log(bootFlag)
-  if (!bootFlag) {
+  if (bootFlag) {
+    container.classList.add('hide')
+    spinner.classList.remove('hide')
+  } else {
     clearInterval(nIntervId)
     spinner.classList.add('hide')
     container.classList.remove('hide')
   }
 }
-
-const buttons = document.querySelectorAll("button");
-buttons.forEach((button) => {
-  button.addEventListener("click", monthChange)
-})
-const spinner = document.querySelector('.pulse-container')
-const container = document.querySelector('.container')
-let nIntervId = setInterval(decreaseTime(), 100)
-
-defaultSettings()
 
 async function requestAPI(requestType, requestData, method = "GET", apikey = undefined) {
   let url = 'https://script.google.com/macros/s/AKfycbzRGGeIsy6j9QKgGzqGvLXw7c6XOJ8mztcXDcz4uBm3S_b9hAg2znP7TYPUBnU6LKaegQ/exec?requestType=' + requestType;
