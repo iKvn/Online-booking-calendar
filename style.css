@@ -77,6 +77,12 @@ tfoot {
   height: 35px;
   padding-top: 4px;
 }
+.timebusy {
+  background-color: rgb(252, 124, 124);
+  color: blue;
+  padding-bottom: 4px;
+  font-weight: 500;
+}
 .down-button {
   height: 25px;
   border-radius: 5px;

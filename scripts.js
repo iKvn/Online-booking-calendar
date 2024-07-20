@@ -26,7 +26,6 @@ const recordingTime = {
 }
 let availableTime = [9, 10, 11, 12, 13, 14, 15]
 let workTime = []
-let timeBusy = false
 
 const informSelectDay = document.querySelector('#selectDay');
 const theadSelectedDay = document.getElementById('selectedDay')
@@ -180,19 +179,16 @@ function getAvailableDates(firstDay, month, year, actionName){
     month, 
     year
   }
-  let returnArray
   requestAPI('getAvailableDates', requestData).then((res) => {
     //debugger
-    if(res.outputValue && Array.isArray(res.outputValue)) returnArray = res.outputValue
-    else returnArray = availableDates
-    setAvailableDates(returnArray, actionName)
+    if(res.outputValue && Array.isArray(res.outputValue)) availableDates = res.outputValue
+    else availableDates = []
+    setAvailableDates(actionName)
     generateCalendar(actionName)
   })   
 }
 
-function setAvailableDates(returnArray, actionName) {
-  if (Array.isArray(returnArray)) {
-    availableDates = returnArray.slice()
+function setAvailableDates(actionName) {
     switch (actionName) {
       case 'defaultSettings':
         calendar()
@@ -208,7 +204,6 @@ function setAvailableDates(returnArray, actionName) {
         currentTargetStyle()
         break
     }
-  } else availableDates = availableDates
 }
 
 function timeSelection(){
@@ -222,19 +217,17 @@ function getAvailableTime(actionName) {
     month: selectedDay.month, 
     year: selectedDay.year
   }
-  let returnArray = availableTime
   requestAPI('getAvailableTime', requestData).then((res) => {
-    if(res.outputValue && Array.isArray(res.outputValue)) returnArray = res.outputValue;
-    else returnArray = availableTime;
-    setAvailableTime(returnArray, actionName);
-    generateTimeCalendar(actionName);
+    if(res.outputValue && Array.isArray(res.outputValue)) availableTime = res.outputValue;
+    else availableTime = [];
+    setAvailableTime(actionName);
+    generateTimeCalendar();
+    informSelectDay.innerHTML = `Дата запису: ${formatDate()}`
   }) 
 }
 
-function setAvailableTime(returnArray, actionName) {
-  if (Array.isArray(returnArray)) {
-    availableTime = returnArray.slice()
-    switch (actionName) {
+function setAvailableTime(actionName) {
+  switch (actionName) {
       case 'defaultSettings':
         timeOutput() 
         timingFlag = true
@@ -244,7 +237,6 @@ function setAvailableTime(returnArray, actionName) {
         timeOutput()
         break
     } 
-  } else availableTime = availableTime
 }
 
 function generateCalendar(actionName) {
@@ -284,13 +276,11 @@ function generateCalendar(actionName) {
   decreaseTime() 
 }
 
-function generateTimeCalendar(actionName) {
+function generateTimeCalendar() {
   const informDay = document.querySelector('#informDay');
   informDay.innerHTML = `${formatDate()}`
 
   const time = document.querySelector('#time')
-
-  //if(actionName != 'defaultSettings') 
   time.replaceChildren()
 
   workTime.forEach((row, indexRow) => {
@@ -313,11 +303,14 @@ function generateTimeCalendar(actionName) {
     time.append(tr);
   })   
   theadSelectedTime.classList.remove('hide')
-  tfootSelectTimeText.classList.remove('hide')
-  tfootSelectTimeText.innerHTML = 'Час не обраний!';
   theadTime.classList.remove('hide')
   theadSelectedDay.classList.add('hide')
   theadCalendar.classList.add('hide')
+
+  tfootSelectTimeText.classList.remove('hide')
+  tfootSelectTimeText.innerHTML = 'Час не обраний!';
+  tfootSelectDayTime.classList.add('hide')
+  
   buttonSelectTime.classList.add('hide')
 }
 
@@ -340,29 +333,39 @@ function clickDay(event){
     tfootSelectTime.classList.remove('hide')
     buttonSelectTime.classList.remove('hide')
     tfootSelectTimeText.classList.add('hide')
-  } /*else {
-    informSelectDay.innerHTML = 'Дата не обрана!'
-    buttonSelectTime.classList.add('hide')
-  }*/
+  }
+}
+
+function dayChange(event){
+  const valueChange = Number(event.target.value)
+  let currentdate = new Date()
+  currentdate.setHours(0, 0, 0, 0)
+  let newCurrentdate = new Date(parametersMonth.year, parametersMonth.number-1, selectedDay.index + valueChange)
+  if (newCurrentdate.getTime() >= currentdate.getTime() ) {
+    parametersMonth = getParametersMonth(newCurrentdate)
+    selectedDay.index = newCurrentdate.getDate()
+    selectedDay.month = newCurrentdate.getMonth() + 1
+    selectedDay.year = parametersMonth.year
+    getAvailableTime('dayChange')
+  }
 }
 
 function clickTime(event){
   const indexRow = Number(event.target.attributes.indexRow.value)
   const indexTime = Number(event.target.attributes.indexTime.value)
-  const time = workTime[indexRow][indexTime]
-  if (time.available) {
+  const timeClick = workTime[indexRow][indexTime]
+
+  if (timeClick.available) {
     cleanСurrentTargetStyle()        
     selectedDay.target = event.target
-    selectedDay.clock = time.clock
-    selectedDay.minutes = time.minutes
+    selectedDay.clock = timeClick.clock
+    selectedDay.minutes = timeClick.minutes
     currentTargetStyle()
 
     tfootSelectTimeText.innerHTML = `Час запису: ${formatTime()}`
     tfootSelectDayTime.classList.remove('hide')
-  } /*else {
-    tfootSelectTime.innerHTML = 'Час не обраний!';
-    tfootSelectDayTime.classList.add('hide')
-  }*/
+    document.querySelector('#chooseAnotherTime').classList.add('hide');
+  } 
 }
 
 function formatDate(){
@@ -380,8 +383,8 @@ function formatTime(dayTime = null){
 
 function formatValues(values){
   let returnValues = values
-  if (values < 10) {
-    returnValues = '0' + values
+  if (Number(values) < 10) {
+    returnValues = `0${values}`
    }
   return returnValues
 }
@@ -391,26 +394,11 @@ function monthChange(event){
   //console.log(valueChange)
   const startdate = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
   const enddate = new Date(startdate.getFullYear(), startdate.getMonth()+2, 1)
-  CURRENT_DATE = new Date(parametersMonth.year, parametersMonth.number - 1, 1)
-  if (valueChange == -1 && startdate.getTime() < CURRENT_DATE.getTime() || valueChange == 1 && enddate.getTime() > CURRENT_DATE.getTime()) {
-    parametersMonth = getParametersMonth(CURRENT_DATE, valueChange)
+  const currentdate = new Date(parametersMonth.year, parametersMonth.number - 1, 1)
+  if (valueChange == -1 && startdate.getTime() < currentdate.getTime() || valueChange == 1 && enddate.getTime() > currentdate.getTime()) {
+    parametersMonth = getParametersMonth(currentdate, valueChange)
     getAvailableDates(parametersMonth.firstDay, parametersMonth.number, parametersMonth.year, 'monthChange')
     //generateCalendar(true)
-  }
-}
-
-function dayChange(event){
-  const valueChange = Number(event.target.value)
-  let currentdate = new Date()
-  currentdate.setHours(0, 0, 0, 0)
-  let newCurrentdate = new Date(parametersMonth.year, parametersMonth.number-1, selectedDay.index + valueChange)
-  if (newCurrentdate.getTime() >= currentdate.getTime() ) {
-    CURRENT_DATE = newCurrentdate
-    parametersMonth = getParametersMonth(CURRENT_DATE)
-    selectedDay.index = CURRENT_DATE.getDate()
-    selectedDay.month = CURRENT_DATE.getMonth() + 1
-    selectedDay.year = parametersMonth.year
-    getAvailableTime('dayChange')
   }
 }
 
@@ -465,36 +453,57 @@ function decreaseTime() {
   }
 }
 
-async function requestAPI(requestType, requestData, method = "GET", apikey = undefined) {
-  let url = 'https://script.google.com/macros/s/AKfycbzRGGeIsy6j9QKgGzqGvLXw7c6XOJ8mztcXDcz4uBm3S_b9hAg2znP7TYPUBnU6LKaegQ/exec?requestType=' + requestType;
-  const headers = {}
-  headers['Content-Type'] = 'text/plain'
-  //headers['Access-Control-Allow-Origin'] = '*'
-  headers['mode'] = 'no-cors'
-  const options = {
-    method, 
-    'mode': 'no-cors',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
-  }
+function confirmSelection(){
+  setSelectedDateTime()
+}
 
-  if (requestData && method != "GET") {
-    options['body'] = JSON.stringify(requestData)
-  } else if(requestData && method == "GET") {
+function setSelectedDateTime() {
+  const requestData = {
+    day: selectedDay.index, 
+    month: selectedDay.month, 
+    year: selectedDay.year, 
+    clock: selectedDay.clock, 
+    date: formatDate()
+  }
+  requestAPI('setSelectedDateTime', requestData).then((res) => {
+    if (res && res.outputValue && res.outputValue.availableTime) {
+      if(Array.isArray(res.outputValue.availableTime)) availableTime = res.outputValue.availableTime.slice()
+      else availableTime = []   
+      //console.log(res)
+      const timeBusy = res.outputValue.timeBusy
+      if(timeBusy) chooseAnotherTime()
+      else dateConfirmed()
+    } else {
+      availableTime = []
+    }
+  }) 
+}
+
+function chooseAnotherTime() {
+  document.querySelector('#chooseAnotherTime').classList.remove('hide');
+  setAvailableTime('defaultSettings');
+  generateTimeCalendar();
+}
+
+function windowСlose() {
+  if(window.parent) window.parent.postMessage(JSON.stringify({eventType: 'web_app_close'}), '*');
+}
+
+async function requestAPI(requestType, requestData, method = "GET") {
+  let url = 'https://script.google.com/macros/s/AKfycbzRGGeIsy6j9QKgGzqGvLXw7c6XOJ8mztcXDcz4uBm3S_b9hAg2znP7TYPUBnU6LKaegQ/exec?requestType=' + requestType;
+
+  if(requestData && method == "GET") {
     url = url + '&day=' + requestData.day + '&month=' + requestData.month + '&year=' + requestData.year
   }
-  if (apikey) {
-    headers['API-Key'] = apikey
+  if(requestType === "setSelectedDateTime") {
+    url = url + '&clock=' + requestData.clock + '&date=' + requestData.date
   }
-  //options['headers'] = headers
   
   try {
     const response = await fetch(url)
-    //debugger
-    //console.log(JSON.stringify(response))
     if(response.ok) return await response.json()
-      else return {"outputValue":[715,716,717,718,719,720,722,723,724,725,726,727,729,730,731]}
+      else return {"outputValue":[]}
   } catch (e) {
-    //debugger
     throw e
   }
 }
