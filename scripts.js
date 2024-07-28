@@ -15,8 +15,6 @@ const selectedDay = {
 
 let availableDates = [20, 21, 26, 28, 30]
 let calendarDays = []
-let timingFlag = false
-let dateConfirmed = false
 const recordingTime = {
   duration: 60,
   startClock: 9,
@@ -27,7 +25,7 @@ const recordingTime = {
 let availableTime = [9, 10, 11, 12, 13, 14, 15]
 let workTime = []
 
-const informSelectDay = document.querySelector('#selectDay');
+const informSelectDay = document.getElementById('selectDay');
 const theadSelectedDay = document.getElementById('selectedDay')
 const theadCalendar = document.getElementById('calendar')
 const theadSelectedTime = document.getElementById('selectedTime')
@@ -93,17 +91,17 @@ function getLastDayOfMonth(year, month, addMonth) {
 
 function calendar() {
   //console.log(this.currentdate.getDate())
-  let month = parametersMonth.number
-  let year = parametersMonth.year
+  const month = parametersMonth.number
+  const year = parametersMonth.year
   let days = []
   let week = 0
   days[week] = []
 
-  let lastDayCurrent = new Date(year, month, 0).getDate()
-  let lastDayPrevious = new Date(year, month - 1, 0).getDate()
+  const lastDayCurrent = new Date(year, month, 0).getDate()
+  const lastDayPrevious = new Date(year, month - 1, 0).getDate()
   //debugger
-  let firstDayWeek = new Date(year, month - 1, 1).getDay()
-  let numberDaysLastMonth = 2 - (firstDayWeek != 0 ? firstDayWeek : 7)
+  const firstDayWeek = new Date(year, month - 1, 1).getDay()
+  const numberDaysLastMonth = 2 - (firstDayWeek != 0 ? firstDayWeek : 7)
   const maxIndex = 6 - firstDayWeek + lastDayPrevious
   for (let i = numberDaysLastMonth; i <= (maxIndex > 35 ? 41 : 34) + numberDaysLastMonth; i++) {
     let day
@@ -419,8 +417,6 @@ function currentTargetStyle(){
 
 function defaultSettings(actionName = 'defaultSettings') {
   bootFlag = true
-  dateConfirmed = false
-  timingFlag = false
   const currentdate = new Date()     
   selectedDay.target = null
   selectedDay.index = 0
@@ -477,6 +473,14 @@ function setSelectedDateTime() {
       availableTime = []
     }
   }) 
+}
+
+function dateConfirmed() {
+  debugger
+  document.querySelector('#dateConfirmed').classList.remove('hide');
+  theadSelectedTime.classList.add('hide');
+  theadTime.classList.add('hide');
+  tfootSelectDayTime.classList.add('hide');
 }
 
 function chooseAnotherTime() {
