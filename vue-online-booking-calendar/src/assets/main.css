@@ -1,0 +1,80 @@
+@import './base.css';
+
+#app {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-weight: normal;
+}
+
+@media (min-width: 680px) {
+  body {
+    display: flex;
+    place-items: center;
+  }
+}
+
+.day {
+  width: 40px;
+  height: 40px;
+  font-weight: 500;
+  font-size: 20px;
+  border-radius: 50%;
+}
+
+.clock {
+  width: 55px;
+  height: 32px;
+  font-weight: 500;
+  font-size: 18px;
+  border-radius: 15%;
+  padding-top: 1%;
+  border-top: 10px;
+}
+
+.selected {
+  background: #66bb6a;
+  color: #ffffff;
+}
+
+.selected:hover {
+  background: #00ff00;
+}
+
+.notselected {
+  background: #ffffff;
+  color: #000000;
+}
+
+.notselected:hover {
+  background: #dcdcdc;
+}
+
+.notAvailable {
+  color: #dcdcdc;
+}
+
+.pulse-bubble-1 {
+  animation: pulse 0.8s ease infinite;
+}
+
+.pulse-bubble-2 {
+  animation: pulse 0.8s ease infinite;
+  animation-delay: 200ms;
+}
+
+.pulse-bubble-3 {
+  animation: pulse 0.8s ease infinite;
+  animation-delay: 400ms;
+}
+
+@keyframes pulse {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  } 
+  to {
+    opacity: 0.45;
+    transform: scale(0.70);
+  } 
+}
