@@ -1,15 +1,19 @@
 <script setup>
 import { getWorkTime, formatTime } from '@/lib/utils'
 import { selectedDay } from '../store/store'
-//const timeValue = [' ', '00:00', '00:00', '00:00', ' ']
 const workTime = getWorkTime([], selectedDay.year, selectedDay.month, selectedDay.index)
-//[timeValue, timeValue, timeValue]
+
+const classPulse = (index) => {
+  if(index == 1) return "pulse-bubble-1";
+  if(index == 2) return "pulse-bubble-2";
+  if(index == 3) return "pulse-bubble-3";
+}
 </script>
 
 <template>
   <tr v-for="(row, index) in workTime" :key="index">             
-    <td class="pulse-bubble pulse-bubble-1" v-for="(time, index) in row" :key="index"> 
-      <span>{{ formatTime(null, time) }}</span>
+    <td class="pulse-bubble" v-for="(time, index) in row" :key="index"> 
+      <span :class="classPulse(index)">{{ formatTime(null, time) }}</span>
     </td>
   </tr>  
 </template>

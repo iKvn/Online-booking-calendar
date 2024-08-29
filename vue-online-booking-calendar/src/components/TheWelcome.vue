@@ -5,6 +5,7 @@ import DayWeek from './DayWeek.vue'
 import CalendarDays from './CalendarDay.vue'
 import CalendarLoading from './CalendarLoading.vue'
 import TimeDay from './TimeDay.vue'
+import TimeDayLoading from './TimeDayLoading.vue'
 import { parametersMonth, selectedDay } from '../store/store'
 import { formatDate, formatTime } from '@/lib/utils'
 import { setSelectedDateTime } from '@/lib/data';
@@ -59,24 +60,23 @@ function chooseAnotherDay() {
 
 async function confirmSelection() {
   confirmLoading.value = true;
-  const response = await setSelectedDateTime(selectedDay.index, selectedDay.month, selectedDay.year, selectedDay.clock, formatDate(selectedDay));
-  if(response) {
-    if(response.availableTime) selectedDay.availableTime = response.availableTime;
-    //if(response.timeBusy) timeBusy = response.timeBusy;
-    dateConfirmed.value = !response.timeBusy;
-    timingFlag.value = response.timeBusy;
-    confirmLoading.value = false;
+  const response = await setSelectedDateTime(selectedDay.index, selectedDay.month + 1, selectedDay.year, selectedDay.clock, formatDate(selectedDay));
+  if(response.timeBusy) {  
+    selectedDay.availableTime = response.availableTime;
+    selectedDay.setTime(undefined, {clock: 0, minutes: 0}, response.timeBusy)
+    dateConfirmed.value = false;
+    timingFlag.value = true;
+  } else {
+    dateConfirmed.value = true;
+    timingFlag.value = false;
   }
+  confirmLoading.value = false;
+
 }
 </script>
 
 <template>
-  <div v-if="confirmLoading" class='pulse-container'>
-    <div class="pulse-bubble pulse-bubble-1"></div>
-    <div class="pulse-bubble pulse-bubble-2"></div>
-    <div class="pulse-bubble pulse-bubble-3"></div>
-  </div>
-  <table v-else class="container">
+  <table class="container">
     <thead>
       <tr v-if='timingFlag'>
         <td>
@@ -119,7 +119,10 @@ async function confirmSelection() {
       <DayWeek v-if='!timingFlag & !dateConfirmed'/>
     </thead>
     <tbody>
-      <template v-if='timingFlag'>
+      <template v-if="confirmLoading">
+        <TimeDayLoading />
+      </template>
+      <template v-else-if='timingFlag'>
         <TimeDay />
       </template>
       <template v-else-if='!dateConfirmed'>
@@ -145,41 +148,31 @@ async function confirmSelection() {
           <span v-else-if='timingFlag'>Час не обраний!</span>
         </td>
       </tr> 
-      <tr v-if='selectedDay.clock != 0 & !dateConfirmed'>
+      <tr v-if='selectedDay.clock != 0 & !dateConfirmed & !selectedDay.timeBusy'>
         <td colspan="7" class="inform">
           <button v-on:click="chooseAnotherDay()" class="down-button">Редагувати</button>
           <button v-on:click="confirmSelection()" class="down-button">Підтвердити</button>
         </td>
       </tr>
+      <tr v-if="selectedDay.timeBusy">
+        <td colspan="7" class="inform timebusy">
+          <p>Перепрошую,</p>
+          <p>обрана вами година зайнята!</p>
+          <p>Оберіть інший час або день!</p>
+        </td>
+      </tr> 
     </tfoot> 
   </table>
 </template>
 
 <style scoped>
-tbodytd{
+tbody td{
   height: min(4vh, 7vw);
   width: min(4vh, 7vw);
   background: rgba(211, 211, 211, 0.404);
   box-shadow: 
     inset 2px 2px 2px gray,
     inset -2px -2px 2px white
-}
-
-.pulse-container {
-  height: 80vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-} 
-
-.pulse-bubble {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background-color: #3ff9dc;
-  margin-right: 24px;
-  opacity: 0.5;
-  transform-origin: 50% 50%;
 }
 
 .container {
@@ -218,5 +211,12 @@ tfoot {
 
 .down-button:hover {
   background: #02d8d8;
+}
+
+.timebusy {
+  background-color: #00ffff;
+  color: red;
+  padding-bottom: 4px;
+  font-weight: 600;
 }
 </style>

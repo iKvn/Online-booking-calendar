@@ -13,8 +13,7 @@ const workTime = computed(() => {
 })
 
 function clickTime(timeClick, event){
-  if (timeClick.available) {
-    selectedDay.cleanStyle()    
+  if (timeClick.available) {   
     selectedDay.setTime(event.currentTarget, timeClick)     
     selectedDay.setStyle(selectedDay.month)
   } 

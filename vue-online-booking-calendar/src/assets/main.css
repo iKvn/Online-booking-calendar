@@ -4,7 +4,6 @@
   max-width: 680px;
   margin: 0 auto;
   padding: 2rem;
-  font-weight: normal;
 }
 
 @media (min-width: 680px) {
@@ -74,7 +73,7 @@
     transform: scale(1);
   } 
   to {
-    opacity: 0.45;
-    transform: scale(0.70);
+    opacity: 0.35;
+    transform: scale(0.80);
   } 
 }

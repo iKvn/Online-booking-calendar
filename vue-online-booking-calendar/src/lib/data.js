@@ -1,3 +1,5 @@
+import { parametersRequest } from "@/store/store";
+
 export async function getAvailableDates() {
   const requestData = {
     'available_period': true, 
@@ -29,22 +31,24 @@ export async function setSelectedDateTime(day, month, year, clock, date) {
     date
   }
   const res = await requestAPI('setSelectedDateTime', requestData)
-  
-  if(res.outputValue && Array.isArray(res.outputValue)) return res.outputValue;
-  else return [];
+  if(res.outputValue && Array.isArray(res.outputValue.availableTime) && Object.hasOwn(res.outputValue, 'timeBusy')) return res.outputValue;
+  else return {
+    availableTime: [],
+    timeBusy: true
+  };
 }
 
 export async function requestAPI(requestType, requestData) {
-  let url = 'https://script.google.com/macros/s/AKfycbzRGGeIsy6j9QKgGzqGvLXw7c6XOJ8mztcXDcz4uBm3S_b9hAg2znP7TYPUBnU6LKaegQ/exec?requestType=' + requestType;
+  let url = `https://script.google.com/macros/s/${parametersRequest.tableid}/exec?requestType=${requestType}`;
 
   if(requestType === "getAvailableDates") {
-    url = url + '&available_period=' + requestData.available_period;
+    url = `${url}&available_period=${requestData.available_period}`;
   }
   if(requestType === "getAvailableTime" || requestType === "setSelectedDateTime") {
-    url = url + '&day=' + requestData.day + '&month=' + requestData.month + '&year=' + requestData.year
+    url = `${url}&day=${requestData.day}&month=${requestData.month}&year=${requestData.year}`
   }
   if(requestType === "setSelectedDateTime") {
-    url = url + '&clock=' + requestData.clock + '&date=' + requestData.date
+    url = `${url}&clock=${requestData.clock}&date=${requestData.date}&userid=${parametersRequest.userid}`
   }
   
  // try {
