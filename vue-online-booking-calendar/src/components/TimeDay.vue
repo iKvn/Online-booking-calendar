@@ -26,7 +26,7 @@ function clickTime(timeClick, event){
     <TimeDayLoading />
   </template>
   <tr v-else v-for="(row, index) in workTime" :key="index">             
-    <td class="day clock notselected" v-for="(dayTime, index) in row" :key="index" v-on:click="clickTime(dayTime,$event)"> 
+    <td class="day clock" v-for="(dayTime, index) in row" :key="index" v-on:click="clickTime(dayTime,$event)" :class="{notselected: dayTime.available}"> 
       <span v-if='dayTime.available'>{{ formatTime(null, dayTime) }}</span>
       <span  v-else class="notAvailable">{{ formatTime(null, dayTime) }}</span>
     </td>

@@ -80,14 +80,14 @@ async function confirmSelection() {
     <thead>
       <tr v-if='timingFlag'>
         <td>
-          <button v-on:click="dayChange(-1)">
-            <ChevronDoubleLeftIcon style="width: 10"/>
+          <button class="button up-button" v-on:click="dayChange(-1)">
+            <ChevronDoubleLeftIcon style="width: 16"/>
           </button>
         </td>
         <td colspan="3" class="inform"> {{ formatDate(selectedDay) }} </td>
         <td>
-          <button v-on:click="dayChange(1)">
-            <ChevronDoubleRightIcon style="width: 10"/>
+          <button class="button up-button" v-on:click="dayChange(1)">
+            <ChevronDoubleRightIcon style="width: 16"/>
           </button>
         </td>
       </tr>
@@ -105,14 +105,14 @@ async function confirmSelection() {
       </tr>
       <tr v-else>
         <td>
-          <button v-on:click="monthChange(-1)">
-            <ChevronDoubleLeftIcon style="width: 10"/>
+          <button class="button up-button" v-on:click="monthChange(-1)">
+            <ChevronDoubleLeftIcon style="width: 16"/>
           </button>
         </td>
         <td colspan="5" class="inform"> {{ parametersMonth.name }} {{ parametersMonth.year }} </td>
         <td>
-          <button v-on:click="monthChange(1)">
-            <ChevronDoubleRightIcon style="width: 10"/>
+          <button class="button up-button" v-on:click="monthChange(1)">
+            <ChevronDoubleRightIcon style="width: 16"/>
           </button>
         </td>
       </tr>
@@ -143,15 +143,15 @@ async function confirmSelection() {
       </tr>
       <tr v-if="selectedDay.index != 0">
         <td colspan="7" class="inform">
-          <button v-if='selectedDay.index != 0 & !timingFlag & !dateConfirmed' v-on:click="timeSelection" class="down-button">Обрати час</button>
+          <button v-if='selectedDay.index != 0 & !timingFlag & !dateConfirmed' v-on:click="timeSelection" class="button down-button">Обрати час</button>
           <span v-if='selectedDay.clock != 0'>Час запису: {{ formatTime(selectedDay) }}</span>    
           <span v-else-if='timingFlag'>Час не обраний!</span>
         </td>
       </tr> 
       <tr v-if='selectedDay.clock != 0 & !dateConfirmed & !selectedDay.timeBusy'>
         <td colspan="7" class="inform">
-          <button v-on:click="chooseAnotherDay()" class="down-button">Редагувати</button>
-          <button v-on:click="confirmSelection()" class="down-button">Підтвердити</button>
+          <button v-on:click="chooseAnotherDay()" class="button down-button">Редагувати</button>
+          <button v-on:click="confirmSelection()" class="button down-button">Підтвердити</button>
         </td>
       </tr>
       <tr v-if="selectedDay.timeBusy">
@@ -166,19 +166,10 @@ async function confirmSelection() {
 </template>
 
 <style scoped>
-tbody td{
-  height: min(4vh, 7vw);
-  width: min(4vh, 7vw);
-  background: rgba(211, 211, 211, 0.404);
-  box-shadow: 
-    inset 2px 2px 2px gray,
-    inset -2px -2px 2px white
-}
-
 .container {
   max-width: 400px;
   font-family: 'Khula', sans-serif;
-  font-size: 16px;
+  font-size: 18px;
   text-align: center;
   font-weight: 625;
 }
@@ -198,19 +189,28 @@ tfoot {
   padding-right: 5px;
 }
 
-.down-button {
+.button {
   height: 25px;
   border-radius: 5px;
   background-color: #00ffff;
   border-width: 1px;
   border-color:#035b8a;
-  margin-bottom: 2.5px;
-  margin-right: 1px;
-  margin-left: 1px;
 }
 
-.down-button:hover {
+.button:hover {
   background: #02d8d8;
+}
+
+.up-button {
+  padding-top: 3px;
+}
+
+.down-button {
+  font-size: 16px;
+  height: 30px;
+  margin-bottom: 2.5px;
+  margin-right: 2px;
+  margin-left: 2px;
 }
 
 .timebusy {

@@ -24,7 +24,7 @@ function clickDay(day, event){
 
 <template>
   <tr v-for="(week, index) in calendarDays" :key="index">             
-    <td class="day notselected" v-for="(day, index) in week" :key="index" v-on:click="clickDay(day,$event)"> 
+    <td class="day" v-for="(day, index) in week" :key="index" v-on:click="clickDay(day,$event)" :class="{notselected: day.available}"> 
       <span v-if='day.available'>{{ day.index }}</span>
       <span  v-else class="notAvailable">{{ day.index }}</span>
     </td>
