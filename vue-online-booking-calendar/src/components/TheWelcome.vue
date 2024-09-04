@@ -1,14 +1,15 @@
 <script setup>
 import { ref } from 'vue'
-import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/vue/24/solid'
 import DayWeek from './DayWeek.vue'
 import CalendarDays from './CalendarDay.vue'
 import CalendarLoading from './CalendarLoading.vue'
 import TimeDay from './TimeDay.vue'
 import TimeDayLoading from './TimeDayLoading.vue'
+import ButtonChange from './ButtonChange.vue'
+
 import { parametersMonth, selectedDay } from '../store/store'
 import { formatDate, formatTime } from '@/lib/utils'
-import { setSelectedDateTime } from '@/lib/data';
+import { setSelectedDateTime } from '@/lib/data'
 
 let timingFlag = ref(false)
 let dateConfirmed = ref(false)
@@ -16,32 +17,8 @@ let confirmLoading = ref(false)
 
 parametersMonth.setParametersMonth({type: 'current', value: 0})
 
-function monthChange(valueChange) {
-  const type = valueChange == 1 ? 'future' : 'past' ;
-  parametersMonth.setParametersMonth({type, value: valueChange})
-  if(selectedDay.target && selectedDay.year == parametersMonth.year && selectedDay.month == parametersMonth.number) {
-    selectedDay.setStyle(parametersMonth.number)
-  } else selectedDay.cleanStyle()
-}
-
 function timeSelection() {
   timingFlag.value = true
-}
-
-function dayChange(valueChange) {
-  const currentdate = new Date()
-  currentdate.setHours(0, 0, 0, 0)
-  const newCurrentdate = new Date(selectedDay.year, selectedDay.month, selectedDay.index + valueChange)
-  if (newCurrentdate.getTime() >= currentdate.getTime() ) {
-    selectedDay.setDay({
-      target: undefined, 
-      day: {
-        index: newCurrentdate.getDate(),
-        month: newCurrentdate.getMonth() 
-      }, 
-      year: newCurrentdate.getFullYear()
-    })
-  }
 }
 
 function chooseAnotherDay() {
@@ -79,17 +56,7 @@ async function confirmSelection() {
   <table class="container">
     <thead>
       <tr v-if='timingFlag'>
-        <td>
-          <button class="button up-button" v-on:click="dayChange(-1)">
-            <ChevronDoubleLeftIcon style="width: 16"/>
-          </button>
-        </td>
-        <td colspan="3" class="inform"> {{ formatDate(selectedDay) }} </td>
-        <td>
-          <button class="button up-button" v-on:click="dayChange(1)">
-            <ChevronDoubleRightIcon style="width: 16"/>
-          </button>
-        </td>
+        <ButtonChange changeMonth='false'/>
       </tr>
       <tr v-else-if='dateConfirmed'>  
         <td colspan="7" class="inform">  
@@ -104,17 +71,7 @@ async function confirmSelection() {
         </td>
       </tr>
       <tr v-else>
-        <td>
-          <button class="button up-button" v-on:click="monthChange(-1)">
-            <ChevronDoubleLeftIcon style="width: 16"/>
-          </button>
-        </td>
-        <td colspan="5" class="inform"> {{ parametersMonth.name }} {{ parametersMonth.year }} </td>
-        <td>
-          <button class="button up-button" v-on:click="monthChange(1)">
-            <ChevronDoubleRightIcon style="width: 16"/>
-          </button>
-        </td>
+        <ButtonChange changeMonth='true'/>
       </tr>
       <DayWeek v-if='!timingFlag & !dateConfirmed'/>
     </thead>
@@ -180,29 +137,6 @@ thead {
 
 tfoot {
   background-color: #83c9ee;
-}
-
-.inform {
-  height: 35px;
-  padding-top: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-.button {
-  height: 25px;
-  border-radius: 5px;
-  background-color: #00ffff;
-  border-width: 1px;
-  border-color:#035b8a;
-}
-
-.button:hover {
-  background: #02d8d8;
-}
-
-.up-button {
-  padding-top: 3px;
 }
 
 .down-button {

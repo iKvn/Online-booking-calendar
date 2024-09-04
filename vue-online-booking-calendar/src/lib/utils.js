@@ -48,7 +48,7 @@ export function getParametersMonth(parametersMonth, action) {
 }
 
 export const getCalendarDays = (month, year, availableDates) => {
-  if(!month) month = new Date().getMonth();
+  if(!(month >= 0)) month = new Date().getMonth();
   if(!year) year = new Date().getFullYear();
   
   let days = [];
@@ -103,7 +103,6 @@ function getParametersDay(index, month, lastDayCurrent, lastDayPrevious, availab
     month--
   } else if (index <= lastDayCurrent) {
     let monthindex = (month + 1) * 100 + index
-    //debugger
     if (availableDates.length > 0) available = availableDates.includes(monthindex)
   } else {
     index = index - lastDayCurrent
