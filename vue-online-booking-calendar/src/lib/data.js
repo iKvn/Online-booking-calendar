@@ -1,5 +1,15 @@
 import { parametersRequest } from "@/store/store";
 
+export async function getOAuthToken() {
+  const requestData = {
+  }
+  const res = await requestAPI('getOAuthToken', requestData);
+  
+  if(res.outputValue) {
+    parametersRequest.authToken = res.outputValue;
+  };
+}
+
 export async function getAvailableDates() {
   const requestData = {
     'available_period': true, 
@@ -38,10 +48,19 @@ export async function setSelectedDateTime(day, month, year, clock, date) {
   };
 }
 
+export async function getReportBooking(report_day) {
+  const requestData = {
+    report_day
+  }
+  const res = await requestAPI('getReportBooking', requestData)
+  if(res.outputValue && Array.isArray(res.outputValue)) return res.outputValue;
+  else return ['Виникла помилка, спробуйте пізніше!'];
+}
+
 export async function requestAPI(requestType, requestData) {
   let url = `https://script.google.com/macros/s/${parametersRequest.tableid}/exec?requestType=${requestType}`;
 
-  if(requestType === "getAvailableDates") {
+  if(requestType === "getAvailableDates" && requestData.available_period) {
     url = `${url}&available_period=${requestData.available_period}`;
   }
   if(requestType === "getAvailableTime" || requestType === "setSelectedDateTime") {
@@ -50,9 +69,28 @@ export async function requestAPI(requestType, requestData) {
   if(requestType === "setSelectedDateTime") {
     url = `${url}&clock=${requestData.clock}&date=${requestData.date}&userid=${parametersRequest.userid}`
   }
+  if(requestType === "getReportBooking" && requestData.report_day) {
+    url = `${url}&reportDay=${requestData.report_day}`
+  }
   
+  const params = {
+    redirect: "follow",
+    method: "GET",
+    muteHttpExceptions: true,
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8",
+    },
+  };
+  /* if(parametersRequest.authToken) params.headers = {
+    Authorization: `Bearer ${parametersRequest.authToken}`
+  }  */
+
  // try {
-    const response = await fetch(url)
+    const response = await fetch(url, params)
+    /* .then((response) => {return response.json()})
+    .then((data) => {
+      return data;
+    }) */
     if(response.ok) return await response.json()
     else return {"outputValue":[]}
   //} catch (e) {

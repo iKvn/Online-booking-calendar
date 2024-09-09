@@ -4,18 +4,18 @@ import { RouterView } from 'vue-router'
 </script>
 
 <template>
-<!--   <div class="wrapper">
+  <div class="wrapper">
     <nav>
-      <RouterLink to="/">Home</RouterLink>
+      <RouterLink to="/">Booking</RouterLink>
       <RouterLink to="/about">About</RouterLink>
+      <RouterLink to="/report">Report</RouterLink>
     </nav>
-  </div> -->
-
+  </div>
   <RouterView />
 </template>
 
 <style scoped>
-/* nav {
+nav {
   width: 100%;
   font-size: 12px;
   text-align: center;
@@ -49,5 +49,5 @@ nav a:first-of-type {
     padding: 1rem 0;
     margin-top: 1rem;
   }
-} */
+} 
 </style>

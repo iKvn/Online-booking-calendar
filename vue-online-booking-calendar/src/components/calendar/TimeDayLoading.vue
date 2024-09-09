@@ -1,6 +1,6 @@
 <script setup>
 import { getWorkTime, formatTime } from '@/lib/utils'
-import { selectedDay } from '../store/store'
+import { selectedDay } from '../../store/store'
 const workTime = getWorkTime([], selectedDay.year, selectedDay.month, selectedDay.index)
 
 const classPulse = (index) => {

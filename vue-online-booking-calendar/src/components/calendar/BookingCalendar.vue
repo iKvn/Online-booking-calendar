@@ -1,17 +1,17 @@
 <script setup>
 import { ref } from 'vue'
-import DayWeek from './DayWeek.vue'
-import CalendarDays from './CalendarDay.vue'
-import CalendarLoading from './CalendarLoading.vue'
-import TimeDay from './TimeDay.vue'
-import TimeDayLoading from './TimeDayLoading.vue'
-import ButtonChange from './ButtonChange.vue'
+import DayWeek from '../calendar/DayWeek.vue'
+import CalendarDays from '../calendar/CalendarDay.vue'
+import DayLoading from '../calendar/DayLoading.vue'
+import TimeDay from '../calendar/TimeDay.vue'
+import TimeDayLoading from '../calendar/TimeDayLoading.vue'
+import ButtonChange from '../calendar/ButtonChange.vue'
 
-import { parametersMonth, selectedDay } from '../store/store'
+import { parametersMonth, selectedDay } from '../../store/store'
 import { formatDate, formatTime } from '@/lib/utils'
 import { setSelectedDateTime } from '@/lib/data'
 
-let timingFlag = ref(false)
+let timingFlag = ref(selectedDay.clock)
 let dateConfirmed = ref(false)
 let confirmLoading = ref(false)
 
@@ -86,7 +86,7 @@ async function confirmSelection() {
         <Suspense>
           <CalendarDays />
           <template #fallback>
-            <CalendarLoading />
+            <DayLoading />
           </template>
         </Suspense>
       </template>         

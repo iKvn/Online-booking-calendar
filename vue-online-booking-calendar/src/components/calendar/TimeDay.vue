@@ -1,7 +1,7 @@
 <script setup>
 import { getWorkTime, formatTime } from '@/lib/utils'
-import { selectedDay } from '../store/store'
-import { watchEffect, computed } from 'vue'
+import { selectedDay } from '../../store/store'
+import { watchEffect, computed, onMounted } from 'vue'
 import TimeDayLoading from './TimeDayLoading.vue'
 
 watchEffect(async () => {
@@ -10,6 +10,16 @@ watchEffect(async () => {
 
 const workTime = computed(() => {
   return getWorkTime(selectedDay.availableTime, selectedDay.year, selectedDay.month, selectedDay.index)
+})
+
+onMounted(() => {
+  if(selectedDay.clock) {
+    const clockNotselected = Array.from(document.querySelectorAll("td.clock.notselected"))
+    selectedDay.target = clockNotselected.find((element) => {
+      return element.innerText === formatTime(selectedDay)
+    })
+    selectedDay.setStyle(selectedDay.month)
+  }
 })
 
 function clickTime(timeClick, event){

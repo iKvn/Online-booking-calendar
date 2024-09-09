@@ -5,6 +5,7 @@ import { getAvailableTime } from '@/lib/data';
 export const parametersRequest = reactive({
   tableid: 'AKfycbzRGGeIsy6j9QKgGzqGvLXw7c6XOJ8mztcXDcz4uBm3S_b9hAg2znP7TYPUBnU6LKaegQ',
   userid: '666fe92cb42f11f3d40981d4',
+  authToken: '',
   setParameters(parameters) {
     if(parameters.tableid) this.tableid = parameters.tableid;
     if(parameters.userid) this.userid = parameters.userid;  
