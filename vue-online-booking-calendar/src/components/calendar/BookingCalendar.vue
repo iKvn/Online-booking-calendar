@@ -11,7 +11,7 @@ import { parametersMonth, selectedDay } from '../../store/store'
 import { formatDate, formatTime } from '@/lib/utils'
 import { setSelectedDateTime } from '@/lib/data'
 
-let timingFlag = ref(selectedDay.clock)
+let timingFlag = ref(selectedDay.clock > 0)
 let dateConfirmed = ref(false)
 let confirmLoading = ref(false)
 
@@ -55,23 +55,22 @@ async function confirmSelection() {
 <template>
   <table class="container">
     <thead>
-      <tr v-if='timingFlag'>
-        <ButtonChange changeMonth='false'/>
-      </tr>
-      <tr v-else-if='dateConfirmed'>  
+      <tr v-if='dateConfirmed'>  
         <td colspan="7" class="inform">  
-        <h3>
-          Дякую!
-        </h3>
-        <h3>
-          Запис здійснено!
-        </h3>
-          <h4>Поверніться будь ласка до месенджера</h4>
-          <h4>вам надіслано повідомлення:</h4>
+          <h3>
+            <p>Дякую!</p>
+            <p>Запис здійснено!</p>
+          </h3>
+        </td>
+      </tr>
+      <tr v-if='dateConfirmed'>
+        <td class="inform">
+          <p>Поверніться будь ласка до месенджера,</p>
+          <p>вам надіслано повідомлення:</p>
         </td>
       </tr>
       <tr v-else>
-        <ButtonChange changeMonth='true'/>
+        <ButtonChange :changeMonth='!timingFlag'/>
       </tr>
       <DayWeek v-if='!timingFlag & !dateConfirmed'/>
     </thead>

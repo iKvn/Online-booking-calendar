@@ -2,15 +2,16 @@
 import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/vue/24/solid'
 import { parametersMonth, selectedDay } from '../../store/store'
 import { formatDate } from '@/lib/utils'
-import { ref } from 'vue'
+import { ref, watchEffect } from 'vue'
 
 const props = defineProps(['changeMonth'])
 
 const changeParameters = ref({ text: '', colspan: 5 })
-setChangeParameters()
+
+watchEffect(() => {setChangeParameters()})
 
 function setChangeParameters() {
-  if (props.changeMonth === 'true') {
+  if (props.changeMonth) {
     changeParameters.value.text = `${parametersMonth.name} ${parametersMonth.year}`
     changeParameters.value.colspan = 5
   } else {
@@ -52,7 +53,7 @@ function dayChange(valueChange) {
 }
 
 function buttonChange(valueChange) {
-  if (props.changeMonth === 'true') monthChange(valueChange)
+  if (props.changeMonth) monthChange(valueChange)
   else dayChange(valueChange)
   setChangeParameters()
 }

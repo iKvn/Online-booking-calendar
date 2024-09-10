@@ -1,5 +1,11 @@
 <script setup>
-import ReportBooking from '../components/ReportBooking.vue'
+import { useAttrs } from 'vue'
+import { parametersRequest } from "@/store/store";
+import ReportBooking from '../components/report/ReportBooking.vue'
+import ReportLoading from '@/components/report/ReportLoading.vue';
+
+const attrs = useAttrs()
+if (attrs.reportday) parametersRequest.reportDay = attrs.reportday
 </script>
 
 <template>
@@ -7,7 +13,7 @@ import ReportBooking from '../components/ReportBooking.vue'
     <Suspense>
       <ReportBooking />
       <template #fallback>
-        Loading...
+        <ReportLoading />
       </template>
     </Suspense>
     

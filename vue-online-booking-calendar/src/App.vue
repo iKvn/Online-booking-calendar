@@ -1,10 +1,9 @@
 <script setup>
 import { RouterView } from 'vue-router'
-//import HelloWorld from './components/HelloWorld.vue'
 </script>
 
 <template>
-  <div class="wrapper">
+  <div v-if="!Object.values($route.query).length" class="wrapper">
     <nav>
       <RouterLink to="/">Booking</RouterLink>
       <RouterLink to="/about">About</RouterLink>
@@ -15,8 +14,11 @@ import { RouterView } from 'vue-router'
 </template>
 
 <style scoped>
+.wrapper {
+  max-width: 400px;
+}
+
 nav {
-  width: 100%;
   font-size: 12px;
   text-align: center;
   margin-top: 2rem;

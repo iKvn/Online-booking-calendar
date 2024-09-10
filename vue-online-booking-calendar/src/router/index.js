@@ -21,6 +21,7 @@ const router = createRouter({
     {
       path: '/report',
       name: 'report',
+      props: route => ({ reportday: route.query.reportday}),
       component: () => import('../views/ReportView.vue')
     }
   ]
