@@ -1,4 +1,5 @@
 <script setup>
+import { PhoneIcon, UserIcon, ClockIcon, CalendarIcon, UserGroupIcon  } from '@heroicons/vue/24/solid'
 import { getReportBooking } from '@/lib/data';
 import { parametersRequest } from "@/store/store";
 
@@ -10,18 +11,31 @@ const filterDay = parametersRequest.reportDay === 'all' ? 'У Вас' : paramete
   <div v-if="reports.length">
     <h2>
       <p>Вітаю!</p>
-      <p>{{ `${filterDay} є записи клієнтів 🗓️ 👍` }}</p>
+      <p>{{ `${filterDay} є записи клієнтів` }}</p>
+      <UserGroupIcon style="width: 22; color:blue;vertical-align: text-top;"/>
     </h2>
-    <div class="greetings" v-for="report in reports" :key="report.RecordId">
-      <h3 >
-        <p v-if="parametersRequest.reportDay === 'all'">{{ `🗓️ ${report.RecordDate} ⏱️ ${report.RecordingTime}:00` }}</p>
-        <p v-else>{{ `⏱️ ${report.RecordingTime}:00` }}</p>
-        <p>
-        <span>{{ `🙍‍♀️ ${report.Name} ` }}</span>
-        <span type="phone">{{ `📞 +${report.Phone}` }}</span>
+    <h3 class="container" v-for="report in reports" :key="report.RecordId">
+      <div>
+        <p v-if="parametersRequest.reportDay === 'all'">
+          <CalendarIcon style="width: 18; color:blue;vertical-align: text-top;"/>
+          <span>{{ report.RecordDate }}</span>
         </p>
-      </h3>
-    </div>
+        <p>
+          <ClockIcon style="width: 18; color:blue;vertical-align: text-top;"/>
+          <span>{{ `${report.RecordingTime}:00` }}</span>
+        </p>
+      </div>
+      <div>
+        <p>
+          <UserIcon style="width: 18; color:blue;vertical-align: text-top;"/>
+          <span>{{ report.Name }}</span>
+        </p>
+        <p>
+          <PhoneIcon style="width: 18; color:blue;vertical-align: text-top;"/>
+          <span>{{ `+${report.Phone}` }}</span>
+        </p>
+      </div>
+    </h3>
   </div>
   <div v-else>
     <h2>
@@ -32,30 +46,57 @@ const filterDay = parametersRequest.reportDay === 'all' ? 'У Вас' : paramete
 </template>
 
 <style scoped>
-h2 {
-  font-weight: 500;
-  font-size: 1.2rem;
-  position: relative;
-  top: -10px;
-}
-
-h3 {
-  font-size: 1rem;
+.container {
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  font-size: 1.1rem;
   background-color: rgb(193, 237, 239);
+  border-radius: 5px;
+  margin-bottom: 5px;
+}
+
+h3 > div {
+  display: flex;
+  flex-direction: row;
+  margin-top: 7px;
+}
+
+p {
+  padding-inline: 0.3rem;
+}
+
+span {
+  padding-inline: 0.2rem;
+}
+
+h2 {
+  display: flex;
+  font-weight: 500;
+  font-size: 1.3rem;
   margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 10px;
 }
 
-.greetings h2,
-.greetings h3 {
-  text-align: left;
-}
-
-@media (max-width: 680px) {
-  .greetings h2,
-  .greetings h3 {
-    text-align: left;
+@media (max-width: 332px) {
+  .container {
+    height: 60px;
+    font-size: 0.9rem;
   }
-}
+
+  h2 {
+    font-weight: 300;
+    font-size: 1.1rem;
+  }
+} 
+
+@media (max-width: 284px) {
+  .container {
+    height: 70px;
+  }
+
+  h2 {
+    font-size: 1.0rem;
+  }
+} 
 </style>
