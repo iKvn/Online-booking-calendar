@@ -1,20 +1,45 @@
 <script setup>
-import { PhoneIcon, UserIcon, ClockIcon, CalendarIcon, UserGroupIcon  } from '@heroicons/vue/24/solid'
+import { PhoneIcon, UserIcon, ClockIcon, CalendarIcon, UserGroupIcon } from '@heroicons/vue/24/solid'
+
 import { getReportBooking } from '@/lib/data';
 import { parametersRequest } from "@/store/store";
+import { ref, computed } from 'vue'
 
 const reports = await getReportBooking(parametersRequest.reportDay);
 const filterDay = parametersRequest.reportDay === 'all' ? 'У Вас' : parametersRequest.reportDay === 'tomorrow' ? 'На завтра' : 'На сьогодні';
+
+const searchQuery = ref('')
+
+const filteredData = computed(() => {
+  let data = reports;
+  let filterKey = reverseSearch(searchQuery.value);
+
+  if (filterKey) {
+    filterKey = filterKey.toLowerCase()
+    data = data.filter((row) => {
+        return row['RecordDate'].indexOf(filterKey) > -1
+    })
+  }
+  return data
+})
+
+function reverseSearch(value) {
+  return String(value).split("-").reverse().join(".");
+}
 </script>
 
 <template>
-  <div v-if="reports.length">
-    <h2>
-      <p>Вітаю!</p>
-      <p>{{ `${filterDay} є записи клієнтів` }}</p>
-      <UserGroupIcon style="width: 22; color:blue;vertical-align: text-top;"/>
-    </h2>
-    <h3 class="container" v-for="report in reports" :key="report.RecordId">
+  <h2>
+    <p>Вітаю!</p>
+    <p>{{ `${filterDay} є записи клієнтів` }}</p>
+    <UserGroupIcon style="width: 22; color:blue;vertical-align: text-top;"/>
+  </h2>
+  <form id="search">
+    <span>Пошук на дату: </span> 
+    <input type="date" name="query" v-model="searchQuery">
+  </form>
+  <div v-if="filteredData.length">
+    <h3 class="container" v-for="report in filteredData" :key="report.RecordId">
       <div>
         <p v-if="parametersRequest.reportDay === 'all'">
           <CalendarIcon style="width: 18; color:blue;vertical-align: text-top;"/>
@@ -38,14 +63,20 @@ const filterDay = parametersRequest.reportDay === 'all' ? 'У Вас' : paramete
     </h3>
   </div>
   <div v-else>
-    <h2>
+    <h2 v-if="searchQuery">
+      <p>{{ `На ${reverseSearch(searchQuery)}, відсутні записи 😥` }}</p>
+    </h2>
+    <h2 v-else>
       <p>Перепрошую, але на жаль,</p>
-      <p>{{ `${filterDay} відсутні записи клієнтів 🗓️ 😟 😥` }}</p>
+      <p>{{ `${filterDay} відсутні записи 😥` }}</p>
     </h2>
   </div>
 </template>
 
 <style scoped>
+#search {
+  margin-bottom: 10px;
+}
 .container {
   height: 60px;
   display: flex;
@@ -74,7 +105,7 @@ span {
 h2 {
   display: flex;
   font-weight: 500;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   margin-bottom: 10px;
 }
 
