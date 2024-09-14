@@ -88,7 +88,7 @@ async function confirmSelection() {
             <DayLoading />
           </template>
         </Suspense>
-      </template>         
+      </template>      
     </tbody>
     <tfoot>
       <tr>

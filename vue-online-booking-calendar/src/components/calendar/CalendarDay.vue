@@ -33,6 +33,7 @@ function clickDay(day, event) {
 </script>
 
 <template>
+  
   <tr v-for="(week, index) in calendarDays" :key="index">
     <td
       class="day"
@@ -45,4 +46,5 @@ function clickDay(day, event) {
       <span v-else class="notAvailable">{{ day.index }}</span>
     </td>
   </tr>
+
 </template>
