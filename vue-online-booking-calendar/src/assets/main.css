@@ -2,8 +2,7 @@
 
 #app {
   max-width: 680px;
-  margin: 0 auto;
-  padding-top: 3rem;
+  margin-top: 5rem;
 }
 
 @media (min-width: 680px) {
@@ -95,4 +94,6 @@
   padding-top: 4px;
   padding-left: 5px;
   padding-right: 5px;
+  text-align-last: center;
+  color: #150562;
 }

@@ -21,11 +21,9 @@ if (attrs.reportday) parametersRequest.reportDay = attrs.reportday
 </template>
 
 <style>
-/* @media (min-width: 1024px) {
-  .about {
-    min-height: 40vh;
-    display: flex;
-    align-items: center;
-  }
+/* main {
+  min-height: 40vh;
+  display: flexbox;
+  align-items: center;
 } */
 </style>

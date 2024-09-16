@@ -35,7 +35,7 @@ function reverseSearch(value) {
     <UserGroupIcon style="width: 22; color:blue;vertical-align: text-top;"/>
   </h2>
   <form id="search">
-    <span>Пошук на дату: </span> 
+    <span>Пошук по даті: </span> 
     <input type="date" name="query" v-model="searchQuery">
   </form>
   <div v-if="filteredData.length">
@@ -64,11 +64,10 @@ function reverseSearch(value) {
   </div>
   <div v-else>
     <h2 v-if="searchQuery">
-      <p>{{ `На ${reverseSearch(searchQuery)}, відсутні записи 😥` }}</p>
+      <p>{{ `На ${reverseSearch(searchQuery)}, записи відсутні 😥` }}</p>
     </h2>
     <h2 v-else>
-      <p>Перепрошую, але на жаль,</p>
-      <p>{{ `${filterDay} відсутні записи 😥` }}</p>
+      <p>Записи клієнтів відсутні 😥</p>
     </h2>
   </div>
 </template>
@@ -77,6 +76,7 @@ function reverseSearch(value) {
 #search {
   margin-bottom: 10px;
 }
+
 .container {
   height: 60px;
   display: flex;
@@ -107,6 +107,8 @@ h2 {
   font-weight: 500;
   font-size: 1.2rem;
   margin-bottom: 10px;
+  align-items: center;
+  justify-content: center;
 }
 
 @media (max-width: 332px) {
@@ -117,11 +119,11 @@ h2 {
 
   h2 {
     font-weight: 300;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
   }
 } 
 
-@media (max-width: 284px) {
+@media (max-width: 290px) {
   .container {
     height: 70px;
   }

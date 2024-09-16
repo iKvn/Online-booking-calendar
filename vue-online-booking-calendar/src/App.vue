@@ -3,7 +3,7 @@ import { RouterView } from 'vue-router'
 </script>
 
 <template>
-  <div v-if="!Object.values($route.query).length" class="wrapper">
+  <div v-if="!Object.values($route.query).length">
     <nav>
       <RouterLink to="/">Booking</RouterLink>
       <RouterLink to="/about">About</RouterLink>
@@ -14,14 +14,15 @@ import { RouterView } from 'vue-router'
 </template>
 
 <style scoped>
-.wrapper {
+div {
   max-width: 400px;
+  align-items: center;
+  margin-top: -3rem;
 }
-
 nav {
-  font-size: 12px;
+  font-size: 1rem;
   text-align: center;
-  margin-top: 2rem;
+  margin-bottom: 1rem;
 }
 
 nav a.router-link-exact-active {
@@ -42,14 +43,12 @@ nav a:first-of-type {
   border: 0;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 460px) {
   nav {
-    text-align: left;
-    margin-left: -1rem;
     font-size: 1rem;
 
     padding: 1rem 0;
-    margin-top: 1rem;
+    margin-top: -5rem;
   }
 } 
 </style>

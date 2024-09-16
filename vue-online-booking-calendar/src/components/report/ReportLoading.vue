@@ -20,7 +20,8 @@
   height: 22px;
   border-radius: 50%;
   background-color: #3ff9dc;
-  margin-right: 24px;
+  margin-left: 12px;
+  margin-right: 12px;
   opacity: 0.5;
   transform-origin: 50% 50%;
 }
