@@ -9,7 +9,7 @@
 <style scoped>
 .pulse-container {
   max-width: 400px;
-  height: 10vh;
+  height: 30vh;
   display: flex;
   justify-content: center;
   align-items: center;

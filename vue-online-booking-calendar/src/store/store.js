@@ -7,9 +7,11 @@ export const parametersRequest = reactive({
   userid: '666fe92cb42f11f3d40981d4',
   authToken: '',
   reportDay: 'all',
+  withoutParameters: true,
   setParameters(parameters) {
     if(parameters.tableid) this.tableid = parameters.tableid;
-    if(parameters.userid) this.userid = parameters.userid;  
+    if(parameters.userid) this.userid = parameters.userid; 
+    this.withoutParameters = !parameters.tableid;
   }
 })
 

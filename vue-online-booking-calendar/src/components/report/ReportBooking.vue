@@ -36,9 +36,9 @@ function reverseSearch(value) {
   </h2>
   <form id="search">
     <span>Пошук по даті: </span> 
-    <input type="date" name="query" v-model="searchQuery">
+    <input type="date" name="query" style="vertical-align: text-bottom" v-model="searchQuery">
   </form>
-  <div v-if="filteredData.length">
+  <scroll-container v-if="filteredData.length">
     <h3 class="container" v-for="report in filteredData" :key="report.RecordId">
       <div>
         <p v-if="parametersRequest.reportDay === 'all'">
@@ -61,7 +61,7 @@ function reverseSearch(value) {
         </p>
       </div>
     </h3>
-  </div>
+  </scroll-container>
   <div v-else>
     <h2 v-if="searchQuery">
       <p>{{ `На ${reverseSearch(searchQuery)}, записи відсутні 😥` }}</p>
@@ -78,7 +78,6 @@ function reverseSearch(value) {
 }
 
 .container {
-  height: 60px;
   display: flex;
   flex-direction: column;
   align-items: left;
@@ -132,4 +131,11 @@ h2 {
     font-size: 1.0rem;
   }
 } 
+
+scroll-container {
+  display: block;
+  height: 440px;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+}
 </style>

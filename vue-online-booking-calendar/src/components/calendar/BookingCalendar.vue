@@ -7,7 +7,7 @@ import TimeDay from '../calendar/TimeDay.vue'
 import TimeDayLoading from '../calendar/TimeDayLoading.vue'
 import ButtonChange from '../calendar/ButtonChange.vue'
 
-import { parametersMonth, selectedDay } from '../../store/store'
+import { parametersMonth, selectedDay, parametersRequest } from '../../store/store'
 import { formatDate, formatTime } from '@/lib/utils'
 import { setSelectedDateTime } from '@/lib/data'
 
@@ -53,6 +53,11 @@ async function confirmSelection() {
 </script>
 
 <template>
+  <div>
+    <h3 class="inform" v-if="parametersRequest.withoutParameters & !dateConfirmed">
+      Для запису оберіть дату та час!
+    </h3>
+  </div>
   <table class="container">
     <thead>
       <tr v-if='dateConfirmed'>  
@@ -64,8 +69,8 @@ async function confirmSelection() {
         </td>
       </tr>
       <tr v-if='dateConfirmed'>
-        <td class="inform">
-          <p>Поверніться будь ласка до месенджера,</p>
+        <td colspan="7" class="inform">
+          <p>Поверніться до месенджера,</p>
           <p>вам надіслано повідомлення:</p>
         </td>
       </tr>
@@ -151,5 +156,9 @@ tfoot {
   color: red;
   padding-bottom: 4px;
   font-weight: 600;
+}
+
+div h3 {
+  text-decoration-line: underline; 
 }
 </style>
