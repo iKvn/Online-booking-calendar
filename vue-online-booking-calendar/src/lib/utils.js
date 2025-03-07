@@ -1,11 +1,11 @@
 export const formatDate = (selectedDay) => {
-  return formatValues(selectedDay.index) + '.' + formatValues(selectedDay.month + 1) + '.' + selectedDay.year
+  return `${formatValues(selectedDay.index)}.${formatValues(selectedDay.month + 1)}.${selectedDay.year}`
 }
 
 export const formatTime = (selectedDay, dayTime = null) => {
   let formatTimeText = ' '
-  if (dayTime && dayTime.clock != '') formatTimeText = formatValues(dayTime.clock) + ':' + formatValues(dayTime.minutes)
-  else if(selectedDay && selectedDay.clock != 0) formatTimeText = formatValues(selectedDay.clock) + ':' + formatValues(selectedDay.minutes)
+  if (dayTime && dayTime.clock != '') formatTimeText = `${formatValues(dayTime.clock)}:${formatValues(dayTime.minutes)}`
+  else if(selectedDay && selectedDay.clock != 0) formatTimeText = `${formatValues(selectedDay.clock)}:${formatValues(selectedDay.minutes)}`
   return formatTimeText
 }
 

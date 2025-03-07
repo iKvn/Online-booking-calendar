@@ -6,7 +6,7 @@ import { RouterView } from 'vue-router'
   <div v-if="!Object.values($route.query).length">
     <nav>
       <RouterLink to="/">Booking</RouterLink>
-      <RouterLink to="/about">About</RouterLink>
+      <!-- <RouterLink to="/about">About</RouterLink> -->
       <RouterLink to="/report">Report</RouterLink>
     </nav>
   </div>
@@ -15,7 +15,6 @@ import { RouterView } from 'vue-router'
 
 <style scoped>
 div {
-  max-width: 400px;
   align-items: center;
   margin-top: -3rem;
 }
