@@ -74,7 +74,51 @@ export const getCalendarDays = (month, year, availableDates) => {
     days[week].push(day)
   }   
   return days;    
-}
+} 
+
+  /* export function getCalendarDays(month, year, availableDates) {
+    const firstDayOfMonth = new Date(year, month - 1, 1);
+    const lastDayOfMonth = new Date(year, month, 0);
+    const daysInMonth = lastDayOfMonth.getDate();
+    const firstDayOfWeek = firstDayOfMonth.getDay();
+
+    const calendarDays = [];
+    let week = [];
+    let dayCounter = 1;
+
+    // Add empty days from previous month
+    for (let i = 0; i < firstDayOfWeek; i++) {
+        week.push({ index: '', available: false, date: null });
+    }
+
+    while (dayCounter <= daysInMonth) {
+        const currentDate = new Date(year, month - 1, dayCounter);
+        const isAvailable = availableDates.some((date) => {
+            const availableDate = new Date(date);
+            return (
+              availableDate.getFullYear() === currentDate.getFullYear() &&
+              availableDate.getMonth() === currentDate.getMonth() &&
+              availableDate.getDate() === currentDate.getDate()
+            );
+          });
+        week.push({ index: dayCounter, available: isAvailable, date: currentDate});
+        if (week.length === 7) {
+            calendarDays.push(week);
+            week = [];
+        }
+        dayCounter++;
+    }
+
+    // Add empty days from next month
+    if (week.length > 0) {
+        while (week.length < 7) {
+            week.push({ index: '', available: false, date: null });
+        }
+        calendarDays.push(week);
+    }
+
+    return calendarDays;
+} */
 
 function formatValues(values){
   let returnValues = values

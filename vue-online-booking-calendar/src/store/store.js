@@ -18,8 +18,8 @@ export const parametersRequest = reactive({
 export const parametersMonth = reactive({
   firstDay: 1,
   name: '',
-  number: 0,
-  year: 2024,
+  number: new Date().getMonth() + 1,
+  year: new Date().getFullYear(),
   setParametersMonth(type) {
     getParametersMonth(this, type)
   }

@@ -51,17 +51,19 @@ function getCurrentDateLocale(currentDate) {
   return reverseSearch(localeDate);
 }
 </script>
-
 <template>
-  <h2 v-if="filteredData.length">
-    <p>Вітаю!</p>
-    <p>{{ `${filterDay.Text} є записи клієнтів` }}</p>
-    <UserGroupIcon style="width: 22; color:blue;vertical-align: text-top;"/>
-  </h2>
-  <form id="search">
-    <span>Пошук по даті: </span> 
-    <input type="date" name="query" style="vertical-align: text-bottom" v-model="searchQuery">
-  </form>
+  <div v-if="filteredData.length">
+    <h2>
+      <p>Вітаю!</p>
+      <p>{{ `${filterDay.Text} є записи клієнтів` }}</p>
+      <UserGroupIcon style="width: 22; color:blue;vertical-align: text-top;"/>
+    </h2>
+    <form id="search">
+      <span>Пошук по даті: </span> 
+      <input type="date" name="query" style="vertical-align: text-bottom" v-model="searchQuery">
+    </form>
+  </div>
+  
   <scroll-container v-if="filteredData.length">
     <h3 class="container" v-for="report in filteredData" :key="report.RecordId">
       <div>
